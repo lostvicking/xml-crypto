@@ -17,7 +17,7 @@ module.exports = {
     sig.addReference(
       "//*[local-name(.)='response']",
       ["http://www.w3.org/2001/10/xml-exc-c14n#"],
-      "http://www.w3.org/2000/09/xmldsig#sha1",
+      "http://www.w3.org/2001/04/xmlenc#sha256",
       "",
       "",
       ["ds", "saml", "xs", "xsi"],
@@ -42,25 +42,12 @@ module.exports = {
       "the signature should be inserted after to root/name"
     );
 
-    sig.keyInfoProvider = new FileKeyInfo("./test/static/client.pem");
-    var res = sig.checkSignature(sig.getSignedXml());
-    console.log(sig.validationErrors);
+    var sig2 = new SignedXml();
+    sig2.keyInfoProvider = new FileKeyInfo("./test/static/client.pem");
+    sig2.loadSignature(sig.getSignatureXml());
+    var res = sig2.checkSignature(xml);
+    console.log("validation errors:", sig2.validationErrors);
 
     test.done();
   },
-
-  // "verify signature with InclusiveNamespaces": function (test) {
-  //   var doc = new dom().parseFromString(xml);
-  //   var node = select(
-  //     "//*[local-name(.)='Signature' and namespace-uri(.)='http://www.w3.org/2000/09/xmldsig#']",
-  //     doc
-  //   )[0];
-
-  //   var sig = new SignedXml();
-  //   sig.keyInfoProvider = new FileKeyInfo("./test/static/client_public.pem");
-  //   sig.loadSignature(node);
-  //   var res = sig.checkSignature(xml);
-  //   console.log(sig.validationErrors);
-  //   test.done();
-  // },
 };
